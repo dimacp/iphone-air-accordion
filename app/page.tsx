@@ -112,12 +112,12 @@ function AccordionControls({ value, setValue }: AccordionControlsProps) {
       variants={{
         hidden: {
           transition: {
-            delayChildren: stagger(0.05),
+            delayChildren: stagger(0.025, { from: "last" }),
           },
         },
         visible: {
           transition: {
-            delayChildren: stagger(0.05),
+            delayChildren: stagger(0.025),
           },
         },
       }}
