@@ -1,103 +1,297 @@
+"use client";
+
+import { useState } from "react";
+import * as Accordion from "@radix-ui/react-accordion";
+import * as RadioGroup from "@radix-ui/react-radio-group";
+import { AnimatePresence, motion, MotionConfig, stagger } from "motion/react";
+import useMeasure from "react-use-measure";
 import Image from "next/image";
+import { AccordionItemType, data } from "./data";
+import { XMark, Caret, Plus } from "./icons";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [value, setValue] = useState<string>("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  return (
+    <MotionConfig
+      transition={{
+        type: "spring",
+        stiffness: 800,
+        damping: 80,
+        mass: 4,
+      }}
+    >
+      <main className="font-sans flex flex-col justify-center items-center min-h-screen bg-background-alt">
+        <div className="relative h-[720px] w-full max-w-screen-2xl bg-background 2xl:rounded-lg flex flex-col justify-center overflow-hidden">
+          <CloseButton value={value} setValue={setValue} />
+          <AccordionControls value={value} setValue={setValue} />
+          <Accordion.Root
+            type="single"
+            value={value}
+            onValueChange={setValue}
+            className="ml-[min(90px,6.25vw)] flex flex-col justify-center items-start gap-3"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {data.map((item) => (
+              <AccordionItem
+                key={item.id}
+                item={item}
+                isOpen={value === item.id}
+                value={item.id}
+                setValue={setValue}
+              />
+            ))}
+          </Accordion.Root>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+    </MotionConfig>
+  );
+}
+
+type CloseButtonProps = {
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+};
+
+function CloseButton({ value, setValue }: CloseButtonProps) {
+  return (
+    <AnimatePresence initial={false}>
+      {value !== "" && (
+        <motion.div
+          initial={{
+            opacity: 0,
+            transform: "translateY(86px) scale(0)",
+          }}
+          animate={{
+            opacity: 1,
+            transform: "translateY(0px) scale(1)",
+          }}
+          exit={{
+            opacity: 0,
+            transform: "translateY(86px) scale(0)",
+          }}
+          className="absolute top-4 right-4"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <button
+            onClick={() => setValue("")}
+            className="cursor-pointer rounded-full size-9 bg-background-gray flex items-center justify-center"
+          >
+            <span className="sr-only">Close</span>
+            <XMark />
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+type AccordionControlsProps = {
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+};
+
+const buttonVariants = {
+  hidden: {
+    opacity: 0,
+    transform: "translateY(86px) scale(0)",
+  },
+  visible: {
+    opacity: 1,
+    transform: "translateY(0px) scale(1)",
+  },
+};
+
+function AccordionControls({ value, setValue }: AccordionControlsProps) {
+  const currentIndex = data.findIndex((item) => item.id === value);
+  const nextIndex = currentIndex + 1;
+  const previousIndex = currentIndex - 1;
+
+  return (
+    <motion.div
+      initial="hidden"
+      animate={value === "" ? "hidden" : "visible"}
+      variants={{
+        hidden: {
+          transition: {
+            delayChildren: stagger(0.05),
+          },
+        },
+        visible: {
+          transition: {
+            delayChildren: stagger(0.05),
+          },
+        },
+      }}
+      className="absolute top-0 left-0 bottom-0 w-[min(90px,6.25vw)] flex flex-col justify-center items-center gap-5"
+    >
+      <motion.div variants={buttonVariants}>
+        <button
+          disabled={value === data[0].id}
+          onClick={() => setValue(data[previousIndex].id)}
+          className="cursor-pointer rounded-full size-9 bg-background-gray flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-100"
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <span className="sr-only">Previous</span>
+          <Caret className="rotate-180 size-10" />
+        </button>
+      </motion.div>
+      <motion.div variants={buttonVariants}>
+        <button
+          disabled={value === data[data.length - 1].id}
+          onClick={() => setValue(data[nextIndex].id)}
+          className="cursor-pointer rounded-full size-9 bg-background-gray flex items-center justify-center  disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-100"
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <span className="sr-only">Next</span>
+          <Caret />
+        </button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+type AccordionItemProps = {
+  item: AccordionItemType;
+  isOpen: boolean;
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+};
+
+function AccordionItem({ item, isOpen, setValue, value }: AccordionItemProps) {
+  const [buttonRef, { width: buttonWidth }] = useMeasure();
+  const [selectedColor, setSelectedColor] = useState<{
+    name: string;
+    code: string;
+  } | null>(data.find((item) => item.id === "colours")?.colors?.[0] ?? null);
+
+  return (
+    <Accordion.Item asChild value={value}>
+      <motion.div
+        style={{
+          borderRadius: 28,
+        }}
+        animate={
+          buttonWidth
+            ? {
+                width: isOpen ? 423 : buttonWidth,
+                height: isOpen ? "auto" : 56,
+              }
+            : {}
+        }
+        className="bg-background-gray w-fit relative overflow-hidden shadow-custom"
+      >
+        <Accordion.Header asChild>
+          <Accordion.Trigger asChild>
+            <motion.button
+              ref={buttonRef}
+              className="h-14 pl-3.5 pr-8 text-[17px] cursor-pointer font-semibold tracking-[-0.022em] leading-[1.2] flex items-center gap-3.5 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-500 whitespace-nowrap"
+              onClick={() => setValue(isOpen ? "" : value)}
+              style={{
+                borderRadius: 28,
+                pointerEvents: isOpen ? "none" : "auto",
+              }}
+              animate={{
+                opacity: isOpen ? 0 : 1,
+              }}
+              initial={{
+                opacity: 1,
+              }}
+              transition={{
+                duration: isOpen ? 0.1 : 0.3,
+                delay: isOpen ? 0 : 0.3,
+              }}
+            >
+              {item.id === "colours" ? (
+                <div
+                  className="size-6 rounded-full inset-shadow-2xs inset-shadow-black/40"
+                  style={{
+                    backgroundColor: selectedColor?.code,
+                  }}
+                />
+              ) : (
+                <Plus />
+              )}
+              <span>{item.title}</span>
+            </motion.button>
+          </Accordion.Trigger>
+        </Accordion.Header>
+
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <Accordion.Content forceMount asChild>
+              <motion.div
+                style={{
+                  borderRadius: 28,
+                }}
+                className="w-[423px] h-full -mt-14 flex flex-col justify-end"
+                initial="closed"
+                animate="open"
+                exit="closed"
+              >
+                <motion.div
+                  variants={{
+                    open: {
+                      opacity: 1,
+                      transform: "translateY(0px)",
+                      transition: {
+                        delay: 0.3,
+                        duration: 0.5,
+                        transform: {
+                          duration: 0,
+                        },
+                      },
+                    },
+                    closed: {
+                      opacity: 0,
+                      transform: "translateY(24px)",
+                      transition: {
+                        delay: 0,
+                        duration: 0.3,
+                      },
+                    },
+                  }}
+                  className="h-full flex flex-col justify-between"
+                >
+                  <p className="p-[28px] text-[17px] tracking-[-0.022em]">
+                    <span className="font-semibold">{item.title}. </span>
+                    {item.description}
+                    {item.id === "colours" && `  ${selectedColor?.name}.`}
+                  </p>
+                  {item.imagePath && (
+                    <motion.div className="relative w-full aspect-video">
+                      <Image
+                        src={item.imagePath}
+                        alt={item.title}
+                        fill
+                        sizes="423px"
+                        className="object-cover w-full h-full"
+                      />
+                    </motion.div>
+                  )}
+                  {item.id === "colours" && (
+                    <RadioGroup.Root
+                      value={selectedColor?.name}
+                      onValueChange={(value) =>
+                        setSelectedColor(
+                          item.colors?.find((color) => color.name === value) ??
+                            null
+                        )
+                      }
+                      className="flex gap-3.5 justify-center items-center pb-[28px]"
+                    >
+                      {item.colors?.map((color) => (
+                        <RadioGroup.Item
+                          key={color.name}
+                          value={color.name}
+                          className="size-6 rounded-full inset-shadow-xs inset-shadow-black/40 outline-2 outline-transparent data-[state=checked]:outline-foreground outline-offset-2 cursor-pointer"
+                          style={{ backgroundColor: color.code }}
+                        />
+                      ))}
+                    </RadioGroup.Root>
+                  )}
+                </motion.div>
+              </motion.div>
+            </Accordion.Content>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </Accordion.Item>
   );
 }

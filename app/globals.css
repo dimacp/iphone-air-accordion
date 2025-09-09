@@ -2,21 +2,27 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1D1D1F;
+  --background-alt: #F5F5F7;
+  --background-gray: #e8e8edb8;
+
+  --radius-lg: 28px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-background-alt: var(--background-alt);
+  --color-background-gray: var(--background-gray);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --shadow-custom: inset 0 0 .5px 0 rgba(0,0,0,.11);
+
+  --radius-lg: var(--radius-lg);
+
+  --breakpoint-2xl: 1440px;
 }
 
 body {
