@@ -22,7 +22,7 @@ export default function Home() {
       }}
     >
       <main className="font-sans flex flex-col justify-center items-center min-h-screen bg-background-alt">
-        <div className="relative h-[720px] w-full max-w-screen-2xl bg-background 2xl:rounded-lg flex flex-col justify-center overflow-hidden">
+        <div className="relative h-[760px] w-full max-w-screen-2xl bg-background 2xl:rounded-lg flex flex-col justify-center overflow-hidden">
           <CloseButton value={value} setValue={setValue} />
           <AccordionControls value={value} setValue={setValue} />
           <Accordion.Root
@@ -194,8 +194,8 @@ function AccordionItem({ item, isOpen, setValue, value }: AccordionItemProps) {
                 opacity: 1,
               }}
               transition={{
-                duration: isOpen ? 0.1 : 0.3,
-                delay: isOpen ? 0 : 0.3,
+                duration: isOpen ? 0.1 : 0.5,
+                delay: isOpen ? 0 : 0.35,
               }}
             >
               {item.id === "colours" ? (
@@ -231,7 +231,7 @@ function AccordionItem({ item, isOpen, setValue, value }: AccordionItemProps) {
                       opacity: 1,
                       transform: "translateY(0px)",
                       transition: {
-                        delay: 0.3,
+                        delay: 0.35,
                         duration: 0.5,
                         transform: {
                           duration: 0,
@@ -243,7 +243,7 @@ function AccordionItem({ item, isOpen, setValue, value }: AccordionItemProps) {
                       transform: "translateY(24px)",
                       transition: {
                         delay: 0,
-                        duration: 0.3,
+                        duration: 0.35,
                       },
                     },
                   }}
