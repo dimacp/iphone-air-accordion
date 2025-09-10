@@ -195,7 +195,7 @@ function AccordionItem({ item, isOpen, setValue, value }: AccordionItemProps) {
               }}
               transition={{
                 duration: isOpen ? 0.1 : 0.5,
-                delay: isOpen ? 0 : 0.35,
+                delay: isOpen ? 0 : 0.32,
               }}
             >
               {item.id === "colours" ? (
@@ -231,7 +231,7 @@ function AccordionItem({ item, isOpen, setValue, value }: AccordionItemProps) {
                       opacity: 1,
                       transform: "translateY(0px)",
                       transition: {
-                        delay: 0.35,
+                        delay: 0.32,
                         duration: 0.5,
                         transform: {
                           duration: 0,
@@ -243,7 +243,7 @@ function AccordionItem({ item, isOpen, setValue, value }: AccordionItemProps) {
                       transform: "translateY(24px)",
                       transition: {
                         delay: 0,
-                        duration: 0.35,
+                        duration: 0.32,
                       },
                     },
                   }}
@@ -261,7 +261,8 @@ function AccordionItem({ item, isOpen, setValue, value }: AccordionItemProps) {
                         alt={item.title}
                         fill
                         sizes="423px"
-                        className="object-cover w-full h-full"
+                        className="object-cover"
+                        draggable={false}
                       />
                     </motion.div>
                   )}
